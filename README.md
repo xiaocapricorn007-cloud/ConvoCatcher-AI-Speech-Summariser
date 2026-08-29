@@ -1,23 +1,25 @@
 # ConvoCatcher AI Speech Summariser
 
-ConvoCatcher is a completely local, privacy-focused Python Command Line Interface (CLI) application that transcribes audio files and summarizes them using on-device AI.
+ConvoCatcher is a fast Python Command Line Interface (CLI) application that transcribes audio files locally and summarizes them using the Gemini API.
 
-It uses **Faster-Whisper** for efficient, highly accurate local speech-to-text transcription, and **Ollama** (e.g., Llama 3) for generating clear, bulleted summaries—all without sending your data to the cloud.
+It uses **Faster-Whisper** for efficient, highly accurate local speech-to-text transcription (keeping the heavy audio processing on your machine), and **Google Gemini** for generating clear, bulleted summaries blazingly fast without needing to download massive AI models.
 
 ## Features
-- **100% Local & Private:** No API keys required, no data leaves your machine.
-- **Efficient Transcription:** Uses `faster-whisper` for optimized inference.
-- **Smart Summarization:** Powered by Ollama, providing a short summary paragraph and bulleted key takeaways.
+- **Efficient Local Transcription:** Uses `faster-whisper` for optimized inference so you don't have to upload large audio files.
+- **Fast Cloud Summarization:** Powered by the Google Gemini API, providing a short summary paragraph and bulleted key takeaways without the heavy compute requirements of local LLMs.
 - **Clean CLI Interface:** Easy to use directly from your terminal.
 
 ## Prerequisites
 
 1. **Python 3.8+** installed.
-2. **Ollama** installed and running on your system. 
-   - Download from [Ollama's official website](https://ollama.com/).
-   - Pull a model to use for summarization (e.g., Llama 3):
+2. **Gemini API Key** from [Google AI Studio](https://aistudio.google.com/).
+   - Set the API key as an environment variable:
      ```bash
-     ollama run llama3
+     # Windows (Command Prompt)
+     set GEMINI_API_KEY=your_api_key_here
+
+     # Windows (PowerShell)
+     $env:GEMINI_API_KEY="your_api_key_here"
      ```
 3. **FFmpeg** installed (required by Whisper for audio processing).
    - Windows: `winget install ffmpeg`
@@ -45,10 +47,10 @@ python convocatcher.py path/to/your/audio_file.mp3
 
 ### Options:
 - `--model_size`: Whisper model size (default: `base`). Options: `tiny`, `base`, `small`, `medium`, `large-v3`.
-- `--ollama_model`: The Ollama model to use for summarization (default: `llama3`).
+- `--gemini_model`: The Gemini model to use for summarization (default: `gemini-1.5-flash`).
 - `--output`: Path to save the summary to a Markdown file.
 
 Example:
 ```bash
-python convocatcher.py meeting.mp4 --model_size small --ollama_model llama3 --output summary.md
+python convocatcher.py meeting.mp4 --model_size small --gemini_model gemini-1.5-pro --output summary.md
 ```

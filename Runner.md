@@ -26,3 +26,8 @@
 - **`faster-whisper` implementation**: Used `device="auto"` and `compute_type="int8"` to maximize compatibility across systems (using GPU if available, but staying memory efficient).
 - **Ollama Prompt Engineering**: Engineered a specific prompt instructing the LLM to output exactly what was requested: a short summary paragraph followed by a bulleted list of key takeaways.
 - **`colorama`**: Added colors to terminal output to make status messages clearly distinguishable from the actual transcript and summary output.
+
+## Switch to Gemini API
+**Action:** Replaced the ollama local summarization with the google-generativeai package to use the Gemini API.
+**Reason:** The user did not have Ollama installed and preferred a lightweight, fast alternative using cloud-based LLM (Gemini) instead of downloading large local LLMs.
+
