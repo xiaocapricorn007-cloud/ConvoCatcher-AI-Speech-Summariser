@@ -55,3 +55,7 @@
 ## Update default model to gemini-3.7-flash
 **Action:** Updated the default model to gemini-3.7-flash at the user's request.
 
+
+## Downgrade default model to gemini-3.6-flash
+**Action:** Downgraded the default model from gemini-3.7-flash to gemini-3.6-flash at the user's request.
+
