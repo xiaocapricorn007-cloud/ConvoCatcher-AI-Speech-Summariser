@@ -51,3 +51,7 @@
 **Action:** Updated the default model across the codebase from gemini-1.5-flash to gemini-2.5-flash.
 **Reason:** Google has deprecated older versions of the API causing 404 NOT_FOUND errors. We updated to the latest standard model available on the API.
 
+
+## Update default model to gemini-3.7-flash
+**Action:** Updated the default model to gemini-3.7-flash at the user's request.
+

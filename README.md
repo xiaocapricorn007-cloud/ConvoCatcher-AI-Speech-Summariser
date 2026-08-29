@@ -61,10 +61,10 @@ python convocatcher.py --gui
 - `--live`: Enable live microphone mode (ignores file input).
 - `--gui`: Enable GUI live mode.
 - `--model_size`: Whisper model size (default: `base`). Options: `tiny`, `base`, `small`, `medium`, `large-v3`.
-- `--gemini_model`: The Gemini model to use for summarization (default: `gemini-2.5-flash`).
+- `--gemini_model`: The Gemini model to use for summarization (default: `gemini-3.7-flash`).
 - `--output`: Path to save the summary to a Markdown file.
 
 Example:
 ```bash
-python convocatcher.py --gui --model_size small --gemini_model gemini-2.5-pro
+python convocatcher.py --gui --model_size small --gemini_model gemini-3.7-pro
 ```
