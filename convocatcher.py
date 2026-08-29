@@ -17,8 +17,11 @@ def transcribe_audio(audio_path, model_size="base", quiet=False):
         # Forcing device="cpu" to avoid missing CUDA library (cublas64_12.dll) errors
         model = WhisperModel(model_size, device="cpu", compute_type="int8")
     except Exception as e:
-        print(f"{Fore.RED}[!] Failed to load Whisper model: {e}{Style.RESET_ALL}")
-        sys.exit(1)
+        if not quiet:
+            print(f"{Fore.RED}[!] Failed to load Whisper model: {e}{Style.RESET_ALL}")
+            sys.exit(1)
+        else:
+            raise Exception(f"Failed to load Whisper model: {e}")
 
     if not quiet:
         print(f"{Fore.CYAN}[*] Transcribing audio...{Style.RESET_ALL}")
@@ -34,8 +37,11 @@ def transcribe_audio(audio_path, model_size="base", quiet=False):
         transcript_text = " ".join(full_transcript)
         return transcript_text
     except Exception as e:
-        print(f"{Fore.RED}[!] Transcription failed: {e}{Style.RESET_ALL}")
-        sys.exit(1)
+        if not quiet:
+            print(f"{Fore.RED}[!] Transcription failed: {e}{Style.RESET_ALL}")
+            sys.exit(1)
+        else:
+            raise Exception(f"Transcription failed: {e}")
 
 def summarize_text(text, model_name="gemini-3.7-flash", quiet=False):
     """Summarizes text using Gemini API."""
@@ -66,8 +72,11 @@ def summarize_text(text, model_name="gemini-3.7-flash", quiet=False):
         )
         return response.text
     except Exception as e:
-        print(f"{Fore.RED}[!] Summarization failed: {e}{Style.RESET_ALL}")
-        sys.exit(1)
+        if not quiet:
+            print(f"{Fore.RED}[!] Summarization failed: {e}{Style.RESET_ALL}")
+            sys.exit(1)
+        else:
+            raise Exception(f"Summarization failed: {e}")
 
 def live_mode(model_size, gemini_model):
     try:
