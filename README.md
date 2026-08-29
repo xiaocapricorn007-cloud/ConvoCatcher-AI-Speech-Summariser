@@ -39,13 +39,20 @@ It uses **Faster-Whisper** for efficient, highly accurate local speech-to-text t
 
 ## Usage
 
+### 1. Process an existing file
 Run the CLI by pointing it to an audio or video file:
-
 ```bash
 python convocatcher.py path/to/your/audio_file.mp3
 ```
 
+### 2. Live Microphone Mode
+Speak directly to your computer! It listens until you stop speaking, then immediately transcribes and summarizes what you just said.
+```bash
+python convocatcher.py --live
+```
+
 ### Options:
+- `--live`: Enable live microphone mode (ignores file input).
 - `--model_size`: Whisper model size (default: `base`). Options: `tiny`, `base`, `small`, `medium`, `large-v3`.
 - `--gemini_model`: The Gemini model to use for summarization (default: `gemini-1.5-flash`).
 - `--output`: Path to save the summary to a Markdown file.

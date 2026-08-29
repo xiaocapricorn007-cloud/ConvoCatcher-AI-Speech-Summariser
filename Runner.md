@@ -31,3 +31,8 @@
 **Action:** Replaced the ollama local summarization with the google-generativeai package to use the Gemini API.
 **Reason:** The user did not have Ollama installed and preferred a lightweight, fast alternative using cloud-based LLM (Gemini) instead of downloading large local LLMs.
 
+
+## Live Microphone Mode
+**Action:** Implemented a continuous live microphone listening mode triggered by the --live flag. Added SpeechRecognition and pyaudio dependencies.
+**Reason:** The user requested the ability to speak to the app directly and have it summarize automatically every time they stop speaking. The SpeechRecognition library inherently handles silence detection (VAD), making it perfectly suited for this loop.
+
