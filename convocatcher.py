@@ -66,11 +66,24 @@ def summarize_text(text, model_name="gemini-3.7-flash", quiet=False):
             f"{text}"
         )
 
-        response = client.models.generate_content(
-            model=model_name,
-            contents=prompt,
-        )
-        return response.text
+        import time
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                )
+                return response.text
+            except Exception as e:
+                if "503" in str(e) and attempt < max_retries - 1:
+                    sleep_time = 2 ** attempt
+                    if not quiet:
+                        print(f"{Fore.YELLOW}[!] API busy. Retrying in {sleep_time}s...{Style.RESET_ALL}")
+                    time.sleep(sleep_time)
+                    continue
+                raise e
+
     except Exception as e:
         if not quiet:
             print(f"{Fore.RED}[!] Summarization failed: {e}{Style.RESET_ALL}")
