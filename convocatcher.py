@@ -37,7 +37,7 @@ def transcribe_audio(audio_path, model_size="base", quiet=False):
         print(f"{Fore.RED}[!] Transcription failed: {e}{Style.RESET_ALL}")
         sys.exit(1)
 
-def summarize_text(text, model_name="gemini-1.5-flash", quiet=False):
+def summarize_text(text, model_name="gemini-2.5-flash", quiet=False):
     """Summarizes text using Gemini API."""
     if not quiet:
         print(f"\n{Fore.CYAN}[*] Generating summary using Gemini model '{model_name}'...{Style.RESET_ALL}")
@@ -191,7 +191,7 @@ def main():
     parser.add_argument("--live", action="store_true", help="Enable live microphone transcription and summarization.")
     parser.add_argument("--gui", action="store_true", help="Launch the live microphone transcription in a simple GUI.")
     parser.add_argument("--model_size", default="base", help="Whisper model size (tiny, base, small, medium, large-v3). Default is 'base'.")
-    parser.add_argument("--gemini_model", default="gemini-1.5-flash", help="Gemini model to use for summarization. Default is 'gemini-1.5-flash'.")
+    parser.add_argument("--gemini_model", default="gemini-2.5-flash", help="Gemini model to use for summarization. Default is 'gemini-2.5-flash'.")
     parser.add_argument("--output", help="Optional path to save the summary to a file (e.g., summary.md).")
     
     args = parser.parse_args()

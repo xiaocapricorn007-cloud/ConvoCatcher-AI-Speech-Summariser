@@ -46,3 +46,8 @@
 **Action:** Switched aster-whisper to CPU mode by default and migrated from the deprecated google.generativeai SDK to the new google.genai SDK.
 **Reason:** The user's system lacked the CUDA DLLs (cublas64_12.dll), which caused aster-whisper to crash when attempting GPU acceleration. Additionally, google.generativeai threw a deprecation warning, so we updated to the officially supported SDK.
 
+
+## Update default model to gemini-2.5-flash
+**Action:** Updated the default model across the codebase from gemini-1.5-flash to gemini-2.5-flash.
+**Reason:** Google has deprecated older versions of the API causing 404 NOT_FOUND errors. We updated to the latest standard model available on the API.
+
