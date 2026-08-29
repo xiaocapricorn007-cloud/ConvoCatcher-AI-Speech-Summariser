@@ -51,13 +51,20 @@ Speak directly to your computer! It listens until you stop speaking, then immedi
 python convocatcher.py --live
 ```
 
+### 3. GUI Mode
+Run the live microphone transcription in a simple Graphical User Interface (GUI) where you can easily read the transcripts and summaries.
+```bash
+python convocatcher.py --gui
+```
+
 ### Options:
 - `--live`: Enable live microphone mode (ignores file input).
+- `--gui`: Enable GUI live mode.
 - `--model_size`: Whisper model size (default: `base`). Options: `tiny`, `base`, `small`, `medium`, `large-v3`.
 - `--gemini_model`: The Gemini model to use for summarization (default: `gemini-1.5-flash`).
 - `--output`: Path to save the summary to a Markdown file.
 
 Example:
 ```bash
-python convocatcher.py meeting.mp4 --model_size small --gemini_model gemini-1.5-pro --output summary.md
+python convocatcher.py --gui --model_size small --gemini_model gemini-1.5-pro
 ```

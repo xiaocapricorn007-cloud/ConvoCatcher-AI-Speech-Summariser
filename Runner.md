@@ -36,3 +36,8 @@
 **Action:** Implemented a continuous live microphone listening mode triggered by the --live flag. Added SpeechRecognition and pyaudio dependencies.
 **Reason:** The user requested the ability to speak to the app directly and have it summarize automatically every time they stop speaking. The SpeechRecognition library inherently handles silence detection (VAD), making it perfectly suited for this loop.
 
+
+## GUI Mode
+**Action:** Implemented a new --gui flag using Python's built-in 	kinter library. It opens a graphical window that logs the status, transcripts, and summaries in real-time.
+**Reason:** The user requested a simple GUI for the live transcript mode so they can easily view the output visually without relying on the command line interface.
+

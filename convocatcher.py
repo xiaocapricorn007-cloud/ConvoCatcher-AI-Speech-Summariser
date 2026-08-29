@@ -105,21 +105,101 @@ def live_mode(model_size, gemini_model):
         print(f"\n{Fore.YELLOW}[*] Stopping live mode.{Style.RESET_ALL}")
         sys.exit(0)
 
+def gui_mode(model_size, gemini_model):
+    import tkinter as tk
+    from tkinter import scrolledtext
+    import threading
+    import tempfile
+    try:
+        import speech_recognition as sr
+    except ImportError:
+        print(f"{Fore.RED}[!] SpeechRecognition or PyAudio not installed.{Style.RESET_ALL}")
+        sys.exit(1)
+
+    root = tk.Tk()
+    root.title("ConvoCatcher - Live Summarizer GUI")
+    root.geometry("700x600")
+
+    status_label = tk.Label(root, text="Initializing...", font=("Arial", 12, "bold"), fg="blue")
+    status_label.pack(pady=10)
+
+    text_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, font=("Arial", 11))
+    text_area.pack(expand=True, fill='both', padx=10, pady=10)
+
+    is_running = True
+
+    def log_gui(message):
+        text_area.insert(tk.END, message + "\n")
+        text_area.see(tk.END)
+
+    def live_thread():
+        r = sr.Recognizer()
+        try:
+            with sr.Microphone() as source:
+                status_label.config(text="Adjusting for ambient noise... Please wait.", fg="orange")
+                r.adjust_for_ambient_noise(source, duration=2)
+                
+                status_label.config(text="Ready! Start speaking.", fg="green")
+                
+                while is_running:
+                    status_label.config(text="Listening...", fg="blue")
+                    try:
+                        # timeout helps us check is_running flag periodically without blocking forever
+                        audio = r.listen(source, timeout=1, phrase_time_limit=None)
+                    except sr.WaitTimeoutError:
+                        continue
+                    
+                    if not is_running:
+                        break
+
+                    status_label.config(text="Processing speech...", fg="purple")
+                    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+                        f.write(audio.get_wav_data())
+                        temp_path = f.name
+                    
+                    transcript = transcribe_audio(temp_path, model_size, quiet=True)
+                    os.remove(temp_path)
+                    
+                    if transcript.strip():
+                        log_gui(f"\n[You said]: {transcript}")
+                        status_label.config(text="Summarizing...", fg="purple")
+                        summary = summarize_text(transcript, gemini_model, quiet=True)
+                        log_gui(f"\n--- SUMMARY ---\n{summary}\n---------------\n")
+                        
+        except Exception as e:
+            if is_running:
+                log_gui(f"Error: {e}")
+                status_label.config(text="Error occurred.", fg="red")
+
+    t = threading.Thread(target=live_thread, daemon=True)
+    t.start()
+
+    def on_closing():
+        nonlocal is_running
+        is_running = False
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.mainloop()
+
 def main():
     parser = argparse.ArgumentParser(description="ConvoCatcher - AI Speech Summariser (Whisper + Gemini)")
     parser.add_argument("audio_file", nargs='?', help="Path to the audio or video file to process.")
     parser.add_argument("--live", action="store_true", help="Enable live microphone transcription and summarization.")
+    parser.add_argument("--gui", action="store_true", help="Launch the live microphone transcription in a simple GUI.")
     parser.add_argument("--model_size", default="base", help="Whisper model size (tiny, base, small, medium, large-v3). Default is 'base'.")
     parser.add_argument("--gemini_model", default="gemini-1.5-flash", help="Gemini model to use for summarization. Default is 'gemini-1.5-flash'.")
     parser.add_argument("--output", help="Optional path to save the summary to a file (e.g., summary.md).")
     
     args = parser.parse_args()
 
-    if args.live:
+    if args.gui:
+        gui_mode(args.model_size, args.gemini_model)
+    elif args.live:
         live_mode(args.model_size, args.gemini_model)
     else:
         if not args.audio_file:
-            print(f"{Fore.RED}[!] Error: Please provide an audio file or use the --live flag.{Style.RESET_ALL}")
+            print(f"{Fore.RED}[!] Error: Please provide an audio file or use --live or --gui.{Style.RESET_ALL}")
             sys.exit(1)
             
         if not os.path.exists(args.audio_file):
