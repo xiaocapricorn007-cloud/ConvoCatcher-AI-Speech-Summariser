@@ -3,7 +3,7 @@ import os
 import sys
 import tempfile
 from faster_whisper import WhisperModel
-import google.generativeai as genai
+from google import genai
 from colorama import init, Fore, Style
 
 # Initialize colorama for cross-platform terminal colors
@@ -12,9 +12,10 @@ init(autoreset=True)
 def transcribe_audio(audio_path, model_size="base", quiet=False):
     """Transcribes audio using faster-whisper."""
     if not quiet:
-        print(f"{Fore.CYAN}[*] Loading Whisper model '{model_size}'...{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}[*] Loading Whisper model '{model_size}' (CPU mode)...{Style.RESET_ALL}")
     try:
-        model = WhisperModel(model_size, device="auto", compute_type="int8")
+        # Forcing device="cpu" to avoid missing CUDA library (cublas64_12.dll) errors
+        model = WhisperModel(model_size, device="cpu", compute_type="int8")
     except Exception as e:
         print(f"{Fore.RED}[!] Failed to load Whisper model: {e}{Style.RESET_ALL}")
         sys.exit(1)
@@ -47,20 +48,22 @@ def summarize_text(text, model_name="gemini-1.5-flash", quiet=False):
         print(f"{Fore.YELLOW}[!] Please set it by running: set GEMINI_API_KEY=your_api_key{Style.RESET_ALL}")
         sys.exit(1)
         
-    genai.configure(api_key=api_key)
-    
-    prompt = (
-        "You are an expert summarizer. I will provide you with a transcript of an audio recording. "
-        "Please provide your response in the following exact format:\n\n"
-        "1. A short summary paragraph (3-5 sentences) capturing the main essence of the transcript.\n"
-        "2. A bulleted list of the key takeaways or action items.\n\n"
-        "Transcript:\n"
-        f"{text}"
-    )
-
     try:
-        model = genai.GenerativeModel(model_name)
-        response = model.generate_content(prompt)
+        client = genai.Client(api_key=api_key)
+        
+        prompt = (
+            "You are an expert summarizer. I will provide you with a transcript of an audio recording. "
+            "Please provide your response in the following exact format:\n\n"
+            "1. A short summary paragraph (3-5 sentences) capturing the main essence of the transcript.\n"
+            "2. A bulleted list of the key takeaways or action items.\n\n"
+            "Transcript:\n"
+            f"{text}"
+        )
+
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt,
+        )
         return response.text
     except Exception as e:
         print(f"{Fore.RED}[!] Summarization failed: {e}{Style.RESET_ALL}")

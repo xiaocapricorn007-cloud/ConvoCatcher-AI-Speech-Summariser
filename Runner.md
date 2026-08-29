@@ -41,3 +41,8 @@
 **Action:** Implemented a new --gui flag using Python's built-in 	kinter library. It opens a graphical window that logs the status, transcripts, and summaries in real-time.
 **Reason:** The user requested a simple GUI for the live transcript mode so they can easily view the output visually without relying on the command line interface.
 
+
+## Bug Fixes & SDK Update
+**Action:** Switched aster-whisper to CPU mode by default and migrated from the deprecated google.generativeai SDK to the new google.genai SDK.
+**Reason:** The user's system lacked the CUDA DLLs (cublas64_12.dll), which caused aster-whisper to crash when attempting GPU acceleration. Additionally, google.generativeai threw a deprecation warning, so we updated to the officially supported SDK.
+

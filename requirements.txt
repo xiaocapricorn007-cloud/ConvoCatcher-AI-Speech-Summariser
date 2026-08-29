@@ -1,5 +1,5 @@
 faster-whisper
-google-generativeai
+google-genai
 colorama
 SpeechRecognition
 pyaudio
