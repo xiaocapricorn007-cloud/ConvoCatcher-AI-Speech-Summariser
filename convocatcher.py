@@ -131,21 +131,28 @@ def gui_mode(model_size, gemini_model):
 
     is_running = True
 
+    def update_status(text, color):
+        if is_running:
+            root.after(0, lambda: status_label.config(text=text, fg=color))
+
     def log_gui(message):
-        text_area.insert(tk.END, message + "\n")
-        text_area.see(tk.END)
+        if is_running:
+            def _append():
+                text_area.insert(tk.END, message + "\n")
+                text_area.see(tk.END)
+            root.after(0, _append)
 
     def live_thread():
         r = sr.Recognizer()
         try:
             with sr.Microphone() as source:
-                status_label.config(text="Adjusting for ambient noise... Please wait.", fg="orange")
+                update_status("Adjusting for ambient noise... Please wait.", "orange")
                 r.adjust_for_ambient_noise(source, duration=2)
                 
-                status_label.config(text="Ready! Start speaking.", fg="green")
+                update_status("Ready! Start speaking.", "green")
                 
                 while is_running:
-                    status_label.config(text="Listening...", fg="blue")
+                    update_status("Listening...", "blue")
                     try:
                         # timeout helps us check is_running flag periodically without blocking forever
                         audio = r.listen(source, timeout=1, phrase_time_limit=None)
@@ -155,7 +162,7 @@ def gui_mode(model_size, gemini_model):
                     if not is_running:
                         break
 
-                    status_label.config(text="Processing speech...", fg="purple")
+                    update_status("Processing speech...", "purple")
                     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
                         f.write(audio.get_wav_data())
                         temp_path = f.name
@@ -165,14 +172,14 @@ def gui_mode(model_size, gemini_model):
                     
                     if transcript.strip():
                         log_gui(f"\n[You said]: {transcript}")
-                        status_label.config(text="Summarizing...", fg="purple")
+                        update_status("Summarizing...", "purple")
                         summary = summarize_text(transcript, gemini_model, quiet=True)
                         log_gui(f"\n--- SUMMARY ---\n{summary}\n---------------\n")
                         
         except Exception as e:
             if is_running:
                 log_gui(f"Error: {e}")
-                status_label.config(text="Error occurred.", fg="red")
+                update_status("Error occurred.", "red")
 
     t = threading.Thread(target=live_thread, daemon=True)
     t.start()
